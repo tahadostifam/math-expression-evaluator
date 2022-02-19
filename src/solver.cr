@@ -3,7 +3,7 @@ module MathSolver
         def solve(line : String) : String | UnacceptableSyntax
             if validate_line(line)
                 line = clear_spaces(line)
-                puts puts 
+                puts line
                 return "ok"
             else
                 raise UnacceptableSyntax.new UnacceptableSyntax.message

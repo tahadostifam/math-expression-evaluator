@@ -13,11 +13,17 @@ def main
     line : String | Nil = gets
 
     if line && line.strip
-      begin
-        __result__ = MATH_SOLVER.solve line  
-        puts RESULT + __result__
-      rescue e
-        puts e.message
+      case line.strip
+      when "clear"
+        puts `clear`.strip
+        next
+      else
+        begin
+          __result__ = MATH_SOLVER.solve line  
+          puts RESULT + __result__
+        rescue e
+          puts e.message
+        end
       end
     end
   end
