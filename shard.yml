@@ -1,0 +1,13 @@
+name: main
+version: 0.1.0
+
+authors:
+  - Taha. Dostifam <mr.tahadostifam@gmail.com>
+
+targets:
+  main:
+    main: src/main.cr
+
+crystal: 1.3.2
+
+license: MIT
