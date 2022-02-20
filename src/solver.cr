@@ -1,35 +1,83 @@
 module MathSolver
     class Solver
-        alias Object = Hash(String, String)
+        private alias Object = Hash(String, String)
+        private alias Number = Float64 | Int64
+
+        private def prev_sent(arr : Array(String), point : Int32) : String | Nil
+            dtrt : Array(String) | Nil # data to return
+            c = point
+            while true
+                ch = arr[c]
+
+                if c == 0
+                    dtrt = arr[0..point]
+                    break
+                elsif Validators.is_operator?(arr[c - 1])
+                    dtrt = arr[c..point]
+                    break
+                end
+
+                c -= 1
+            end
+            if dtrt
+                dtrt.join("")
+            end
+        end
 
         private def detect_senteces_and_solve_math(arr : Array(String)) : String
             nos : Int32 = Validators.cosents(arr) # -> number of senteces
             op : String | Nil # -> operator
             sents = [] of Object # -> array of our senteces
-            fres : Int64 = 0 # -> final result
+            fres : Number = 0 # -> final result
 
             Validators.dosents(arr) do |op_i|
-                sents << Object{
-                    "op" => arr[op_i],
-                    "fisent" => arr[op_i - 1],
-                    "sesent" => arr[op_i + 1]
-                }
+                fisent : String | Nil = prev_sent(arr, op_i - 1)
+                if fisent
+                    sents << Object{
+                        "op" => arr[op_i],
+                        "fisent" => fisent, # -> first sentece
+                        "sesent" => arr[op_i + 1] # -> second sentece
+                    }
+                end
             end
 
-            ss = 0 # -> solved sentences
-            while ss < sents.size
-                sent = arr[ss]
+            puts sents
+
+            # ss = 0 # -> solved sentences
+            # while ss < sents.size
+            #     sent = sents[ss]
                 
-                # TODO
-                # sorting the sentences by prorit
+            #     puts sent
+            #     # sentece_result = __answer_of_sentence(sent["op"], sent["fisent"].to_i, sent["sesent"].to_i)
+            #     # if sentece_result
+            #     #     sentece_result
+            #     # else
+            #     #     puts "result is empty"
+            #     # end
 
-                ss += 1
-            end
+            #     ss += 1
+            # end
             
-            fres
+            fres.to_s
+        end
+
+        private def __answer_of_sentence(op : String, x : Int32, y : Int32)
+            case op
+            when "+"
+                return x + y
+            when "-"
+                return x - y
+            when "*"
+                return x * y
+            when "/"
+                return x / y
+            else
+                raise UnknownOperator.new UnknownOperator.message
+                return Nil
+            end
         end
         
-        def solve(line : String) : String | UnacceptableSyntax
+        def solve(line : String) : String | UnacceptableSyntax # -> main function
             if MathSolver::Validators.validate_line(line)
                 line = clear_spaces(line)
                 
@@ -61,7 +109,7 @@ module MathSolver
             @@operators.includes?(ch)
         end
 
-        def self.cosents(arr : Array(String))
+        def self.cosents(arr : Array(String)) # -> counts the senteces
             c = 0
             arr.each do |i|
                 c += 1 if @@operators.includes?(i)
@@ -88,6 +136,11 @@ module MathSolver
     class UnacceptableSyntax < Exception
         def self.message 
             "Unacceptable Syntax"
+        end
+    end
+    class UnknownOperator < Exception
+        def self.message 
+            "Unknown Operator"
         end
     end
 end
