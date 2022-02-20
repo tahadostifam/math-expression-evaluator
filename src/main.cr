@@ -15,7 +15,7 @@ def main
     if line && line.strip
       case line.strip
       when "clear"
-        puts `clear`.strip
+        puts `clear`
         next
       else
         begin
