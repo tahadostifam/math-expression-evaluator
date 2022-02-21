@@ -55,13 +55,67 @@ module MathSolver
             end
         end
 
+        private def indexof_prev_sent(arr : Array(String), point : Int32) : Array(Int32) | Nil
+            dtrt : Array(String) | Nil # data to return
+            c = point
+            while true
+                if c == 0
+                    dtrt = 0..point
+                    break
+                end
+
+                begin
+                    if Validators.is_operator?(arr[c - 2])
+                        dtrt = c..point
+                        break
+                    end
+                rescue
+                end
+
+                c -= 1
+            end
+            if dtrt
+                dtrt
+            end
+        end
+
+        private def indexof_next_sent(arr : Array(String), point : Int32) : Array(Int32) | Nil
+            dtrt : Array(String) | Nil # data to return
+            c = point
+
+            while true
+                if c == arr.size
+                    dtrt = (point + 1)..c
+                    break
+                end
+
+                begin
+                    if !arr[c + 1].nil?
+                        fncnum = Validators.is_operator?(arr[c + 1])
+                        if fncnum
+                            dtrt = point..c
+                            break
+                        end
+                    end
+                rescue
+                end
+
+                c += 1
+            end
+            if dtrt
+                dtrt
+            end
+        end
+
         private def convert_to_seprated_sents(line : String, nos : Int32) : String
             # SECTION - prioritizing sentences
             pizent = ...line
-            line.each_char do |ch|
+            c = 0
+            while c < line.size
+                ch = line[c]
                 case ch
                 when "/"
-                    
+                    puts c
                 else
                     
                 end
@@ -77,10 +131,11 @@ module MathSolver
 
             if nos > 1
                 line = convert_to_seprated_sents arr.join(""), nos
+                p! line
+                return "NOS > 1 !"
             else
                 line = arr.join("")
             end
-
 
             Validators.dosents(arr) do |op_i|
                 fisent : String | Nil = prev_sent(arr, op_i - 1) # -> first sentece
@@ -96,25 +151,31 @@ module MathSolver
                 end
             end
 
+            p! sents
+
             ss = 0 # -> solved sentences
             while ss < sents.size
                 sent = sents[ss]
 
                 sentece_result = __answer_of_sentence(sent["op"], sent["fisent"].to_i, sent["sesent"].to_i)
                 if sentece_result
-                    case sent["op"]
-                    when "+"
-                        fres = fres + sentece_result
-                    when "-"
-                        fres = fres - sentece_result
-                    when "*"
-                        fres = fres * sentece_result
-                    when "/"
-                        fres = fres / sentece_result
+                    if ss > 0
+                        case sent["op"]
+                        when "+"
+                            fres = fres + sentece_result
+                        when "-"
+                            fres = fres - sentece_result
+                        when "*"
+                            fres = fres * sentece_result
+                        when "/"
+                            fres = fres / sentece_result
+                        else
+                            raise UnknownOperator.new UnknownOperator.message
+                            break
+                            return Nil
+                        end
                     else
-                        raise UnknownOperator.new UnknownOperator.message
-                        break
-                        return Nil
+                        fres = sentece_result
                     end
                 else
                     raise ErrorInCalc.new ErrorInCalc.message
