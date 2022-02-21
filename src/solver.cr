@@ -1,9 +1,9 @@
 module MathSolver
     class Solver
         private alias Object = Hash(String, String)
-        private alias Number = Float64 | Int64
+        private alias Number = Float64 | Int64 | Int32 | Int8
 
-        private def prev_sent(arr : Array(String), point : Int32) : String | Nil
+        private def prev_sent(arr : Array(String), point : Int32, nos : Int32) : String | Nil
             dtrt : Array(String) | Nil # data to return
             c = point
             while true
@@ -31,7 +31,7 @@ module MathSolver
             fres : Number = 0 # -> final result
 
             Validators.dosents(arr) do |op_i|
-                fisent : String | Nil = prev_sent(arr, op_i - 1)
+                fisent : String | Nil = prev_sent(arr, op_i - 1, nos)
                 if fisent
                     sents << Object{
                         "op" => arr[op_i],
@@ -41,27 +41,39 @@ module MathSolver
                 end
             end
 
-            puts sents
-
-            # ss = 0 # -> solved sentences
-            # while ss < sents.size
-            #     sent = sents[ss]
+            ss = 0 # -> solved sentences
+            while ss < sents.size
+                sent = sents[ss]
                 
-            #     puts sent
-            #     # sentece_result = __answer_of_sentence(sent["op"], sent["fisent"].to_i, sent["sesent"].to_i)
-            #     # if sentece_result
-            #     #     sentece_result
-            #     # else
-            #     #     puts "result is empty"
-            #     # end
+                p! sent # SECTION
 
-            #     ss += 1
-            # end
+                sentece_result = __answer_of_sentence(sent["op"], sent["fisent"].to_i, sent["sesent"].to_i)
+                if sentece_result
+                    case sent["op"]
+                    when "+"
+                        fres = fres + sentece_result
+                    when "-"
+                        fres = fres - sentece_result
+                    when "*"
+                        fres = fres * sentece_result
+                    when "/"
+                        fres = fres / sentece_result
+                    else
+                        raise UnknownOperator.new UnknownOperator.message
+                        break
+                        return Nil
+                    end
+                else
+                    raise ErrorInCalc.new ErrorInCalc.message
+                end
+
+                ss += 1
+            end
             
             fres.to_s
         end
 
-        private def __answer_of_sentence(op : String, x : Int32, y : Int32)
+        private def __answer_of_sentence(op : String, x : Int32, y : Int32) : Number | Nil
             case op
             when "+"
                 return x + y
@@ -73,7 +85,6 @@ module MathSolver
                 return x / y
             else
                 raise UnknownOperator.new UnknownOperator.message
-                return Nil
             end
         end
         
@@ -141,6 +152,11 @@ module MathSolver
     class UnknownOperator < Exception
         def self.message 
             "Unknown Operator"
+        end
+    end
+    class ErrorInCalc < Exception
+        def self.message 
+            "Error In Calculate The Answer"
         end
     end
 end

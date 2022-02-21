@@ -17,6 +17,8 @@ def main
       when "clear"
         puts `clear`
         next
+      when "exit"
+        exit
       else
         begin
           __result__ = MATH_SOLVER.solve line  
