@@ -108,19 +108,28 @@ module MathSolver
         end
 
         private def convert_to_seprated_sents(line : String, nos : Int32) : String
+            # ANCHOR
+            # Validators.priorities
+            
             # SECTION - prioritizing sentences
-            pizent = ...line
-            c = 0
-            while c < line.size
-                ch = line[c]
-                case ch
-                when "/"
-                    puts c
-                else
-                    
+            pizent = line 
+            counted_ops = 4
+            while counted_ops > 0
+                c = 0
+                while c < line.size
+                    ch = line[c]
+                    case ch
+                    when "/"
+                        puts c
+                    else
+                        UnknownOperator.new UnknownOperator.message
+                    end
+                    c += 1
                 end
+                counted_ops -= 1
             end
-            ""
+            
+            pizent
         end
 
         private def detect_senteces_and_solve_math(arr : Array(String)) : String
@@ -129,10 +138,10 @@ module MathSolver
             sents = [] of Object # -> array of our senteces
             fres : Number = 0 # -> final result
 
-            if nos > 1
+            if nos != 1
                 line = convert_to_seprated_sents arr.join(""), nos
                 p! line
-                return "NOS > 1 !"
+                return "TODO :]"
             else
                 line = arr.join("")
             end
@@ -232,6 +241,21 @@ module MathSolver
 
         def self.is_operator?(ch : String)
             @@operators.includes?(ch)
+        end
+
+        def self.priorities(i : Int32) : String
+            case i
+            when 4
+                return "/"
+            when 3
+                return "*"
+            when 2
+                return "-"
+            when 1
+                return "+"
+            else
+                raise Exception.new "Bad I of Priority"
+            end
         end
 
         def self.cosents(arr : Array(String)) # -> counts the senteces
