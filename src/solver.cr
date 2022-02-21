@@ -3,18 +3,21 @@ module MathSolver
         private alias Object = Hash(String, String)
         private alias Number = Float64 | Int64 | Int32 | Int8
 
-        private def prev_sent(arr : Array(String), point : Int32, nos : Int32) : String | Nil
+        private def prev_sent(arr : Array(String), point : Int32) : String | Nil
             dtrt : Array(String) | Nil # data to return
             c = point
             while true
-                ch = arr[c]
-
                 if c == 0
                     dtrt = arr[0..point]
                     break
-                elsif Validators.is_operator?(arr[c - 1])
-                    dtrt = arr[c..point]
-                    break
+                end
+
+                begin
+                    if Validators.is_operator?(arr[c - 2])
+                        dtrt = arr[c..point]
+                        break
+                    end
+                rescue
                 end
 
                 c -= 1
@@ -24,28 +27,78 @@ module MathSolver
             end
         end
 
+        private def next_sent(arr : Array(String), point : Int32) : String | Nil
+            dtrt : Array(String) | Nil # data to return
+            c = point
+
+            while true
+                if c == arr.size
+                    dtrt = arr[(point + 1)..c]
+                    break
+                end
+
+                begin
+                    if !arr[c + 1].nil?
+                        fncnum = Validators.is_operator?(arr[c + 1])
+                        if fncnum
+                            dtrt = arr[point..c]
+                            break
+                        end
+                    end
+                rescue
+                end
+
+                c += 1
+            end
+            if dtrt
+                dtrt.join("")
+            end
+        end
+
+        private def convert_to_seprated_sents(line : String, nos : Int32) : String
+            # SECTION - prioritizing sentences
+            pizent = ...line
+            line.each_char do |ch|
+                case ch
+                when "/"
+                    
+                else
+                    
+                end
+            end
+            ""
+        end
+
         private def detect_senteces_and_solve_math(arr : Array(String)) : String
             nos : Int32 = Validators.cosents(arr) # -> number of senteces
             op : String | Nil # -> operator
             sents = [] of Object # -> array of our senteces
             fres : Number = 0 # -> final result
 
+            if nos > 1
+                line = convert_to_seprated_sents arr.join(""), nos
+            else
+                line = arr.join("")
+            end
+
+
             Validators.dosents(arr) do |op_i|
-                fisent : String | Nil = prev_sent(arr, op_i - 1, nos)
-                if fisent
+                fisent : String | Nil = prev_sent(arr, op_i - 1) # -> first sentece
+                sesent : String | Nil = next_sent(arr, op_i) # -> second sentece
+                if fisent && sesent
                     sents << Object{
                         "op" => arr[op_i],
-                        "fisent" => fisent, # -> first sentece
-                        "sesent" => arr[op_i + 1] # -> second sentece
+                        "fisent" => fisent, 
+                        "sesent" => sesent 
                     }
+                else
+                    ErrorInCalc.new ErrorInCalc.message
                 end
             end
 
             ss = 0 # -> solved sentences
             while ss < sents.size
                 sent = sents[ss]
-                
-                p! sent # SECTION
 
                 sentece_result = __answer_of_sentence(sent["op"], sent["fisent"].to_i, sent["sesent"].to_i)
                 if sentece_result
