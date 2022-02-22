@@ -55,8 +55,8 @@ module MathSolver
             end
         end
 
-        private def indexof_prev_sent(arr : Array(String), point : Int32) : Array(Int32) | Nil
-            dtrt : Array(String) | Nil # data to return
+        private def indexof_prev_sent(arr : Array(String), point : Int32) : Range(Int32, Int32) | Nil
+            dtrt : Range(Int32, Int32) | Nil # data to return
             c = point
             while true
                 if c == 0
@@ -79,8 +79,8 @@ module MathSolver
             end
         end
 
-        private def indexof_next_sent(arr : Array(String), point : Int32) : Array(Int32) | Nil
-            dtrt : Array(String) | Nil # data to return
+        private def indexof_next_sent(arr : Array(String), point : Int32) : Range(Int32, Int32) | Nil
+            dtrt : Range(Int32, Int32) | Nil # data to return
             c = point
 
             while true
@@ -107,25 +107,34 @@ module MathSolver
             end
         end
 
-        private def convert_to_seprated_sents(line : String, nos : Int32) : String
-            # ANCHOR
-            # Validators.priorities
-            
+        private def convert_to_seprated_sents(arr : Array(String), nos : Int32) : Array(String)
             # SECTION - prioritizing sentences
-            pizent = line 
+            pizent = arr.clone
             counted_ops = 4
             while counted_ops > 0
+
                 c = 0
-                while c < line.size
-                    ch = line[c]
-                    case ch
-                    when "/"
-                        puts c
-                    else
-                        UnknownOperator.new UnknownOperator.message
+                while c < arr.size
+                    ch = arr[c]
+                    if ch.to_s == Validators.priorities(counted_ops)
+                        p! prev_sent(arr, c - 1),
+                            next_sent(arr, c)
+                        puts "----------------------"
+
+                        fisent = indexof_prev_sent(arr, c - 1)
+                        sesent = indexof_next_sent(arr, c)
+                        if fisent && fisent
+                            sf = fisent.to_a.first
+                            sl = fisent.to_a.last
+                            # pizent.insert(sf, "[") FIXME
+                            # pizent.insert(sl, "]")
+                        else
+                            raise Exception.new "fisent or sesent is empty ar convert_to_seprated_sents func"
+                        end
                     end
                     c += 1
                 end
+                
                 counted_ops -= 1
             end
             
@@ -139,11 +148,11 @@ module MathSolver
             fres : Number = 0 # -> final result
 
             if nos != 1
-                line = convert_to_seprated_sents arr.join(""), nos
+                line = convert_to_seprated_sents arr, nos
                 p! line
                 return "TODO :]"
             else
-                line = arr.join("")
+                line = arr
             end
 
             Validators.dosents(arr) do |op_i|

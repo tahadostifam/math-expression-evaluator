@@ -2,6 +2,6 @@ require "./spec_helper"
 
 describe "Main" do
   it "works" do
-    false.should eq(false)
+    puts [1,2,3].last
   end
 end
