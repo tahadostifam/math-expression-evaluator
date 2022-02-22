@@ -10,12 +10,14 @@ module MathSolver
                 if c == 0
                     dtrt = arr[0..point]
                     break
+                    return
                 end
 
                 begin
-                    if Validators.is_operator?(arr[c - 2])
+                    if Validators.is_operator?(arr[c - 1])
                         dtrt = arr[c..point]
                         break
+                        return
                     end
                 rescue
                 end
@@ -41,7 +43,7 @@ module MathSolver
                     if !arr[c + 1].nil?
                         fncnum = Validators.is_operator?(arr[c + 1])
                         if fncnum
-                            dtrt = arr[point..c]
+                            dtrt = arr[(point + 1)..c]
                             break
                         end
                     end
@@ -65,9 +67,10 @@ module MathSolver
                 end
 
                 begin
-                    if Validators.is_operator?(arr[c - 2])
+                    if Validators.is_operator?(arr[c - 1])
                         dtrt = c..point
                         break
+                        return
                     end
                 rescue
                 end
@@ -93,7 +96,7 @@ module MathSolver
                     if !arr[c + 1].nil?
                         fncnum = Validators.is_operator?(arr[c + 1])
                         if fncnum
-                            dtrt = point..c
+                            dtrt = (point + 1)..c
                             break
                         end
                     end
