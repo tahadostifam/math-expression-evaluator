@@ -120,17 +120,25 @@ module MathSolver
                 while c < arr.size
                     ch = arr[c]
                     if ch.to_s == Validators.priorities(counted_ops)
-                        p! prev_sent(arr, c - 1),
-                            next_sent(arr, c)
-                        puts "----------------------"
-
                         fisent = indexof_prev_sent(arr, c - 1)
                         sesent = indexof_next_sent(arr, c)
                         if fisent && fisent
-                            sf = fisent.to_a.first
-                            sl = fisent.to_a.last
-                            # pizent.insert(sf, "[") FIXME
-                            # pizent.insert(sl, "]")
+                            sf = fisent
+                            sl = sesent
+                            if sf && sl
+                                p! sf, sl
+
+                                sf = sf.to_a.first
+                                sl = sl.to_a.last + 1
+
+                                puts ":: :: :: "  + sf.to_s + ":: :: ::"
+                                puts ":: :: :: "  + sl.to_s + ":: :: ::"
+
+                                pizent.insert(sf, "[")
+                                pizent.insert(sl, "]")
+                            else
+                                raise Exception.new "sf or sl is empty in separating sentece"
+                            end
                         else
                             raise Exception.new "fisent or sesent is empty ar convert_to_seprated_sents func"
                         end
@@ -152,7 +160,7 @@ module MathSolver
 
             if nos != 1
                 line = convert_to_seprated_sents arr, nos
-                p! line
+                p! line.join ""
                 return "TODO :]"
             else
                 line = arr
