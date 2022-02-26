@@ -69,10 +69,6 @@ module MathSolver
             op : String | Nil # -> operator
             fres : Number = 0 # -> final result
 
-            arr_string = arr.join ""
-
-            p! arr_string # NOTE
-
             unsolved_op = nos
             op_i = 0
             while op_i < arr.size
@@ -89,13 +85,15 @@ module MathSolver
                             break
                         end
 
-                        arr[i1..i2] = res.to_s
+                        p! arr
+
+                        # arr[i1..i2] = res.to_s
 
                         # if nos == 2
                         #     arr[fisent["range"]] = ""
                         # end
                         
-                        p! arr[fisent["range"]]
+                        # p! arr[fisent["range"]]
 
                         unsolved_op -= 1
                     else
