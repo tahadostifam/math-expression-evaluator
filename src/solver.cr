@@ -69,43 +69,43 @@ module MathSolver
             op : String | Nil # -> operator
             fres : Number = 0 # -> final result
 
-            Validators.dosents(arr) do |op_i|
-                fisent : DataAndRange | Nil = prev_sent(arr, op_i - 1) # -> first sentece
-                sesent : DataAndRange | Nil = next_sent(arr, op_i) # -> second sentece
-                if fisent && sesent
-                    begin
-                        res = do_op(fisent["data"].to_f, sesent["data"].to_f, arr[op_i])
-                        p! res
-                        # if res
-                        #     p! res
-                        #     break
-                        # else
-                        #     raise Exception.new "do_op's callback is empty"
+            arr_string = arr.join ""
+
+            p! arr_string # NOTE
+
+            unsolved_op = nos
+            op_i = 0
+            while op_i < arr.size
+               if Validators.operators.includes?(arr[op_i]) 
+                    fisent : DataAndRange | Nil = prev_sent(arr, op_i - 1) # -> first sentece
+                    sesent : DataAndRange | Nil = next_sent(arr, op_i) # -> second sentece
+                    if fisent && sesent
+                        begin
+                            res = do_op(fisent["data"].to_f, sesent["data"].to_f, arr[op_i])
+                            i1 = fisent["range"].to_a.first
+                            i2 = sesent["range"].to_a.last - 1
+                        rescue
+                            raise Exception.new "Error in parsing String into Number"
+                            break
+                        end
+
+                        arr[i1..i2] = res.to_s
+
+                        # if nos == 2
+                        #     arr[fisent["range"]] = ""
                         # end
-                    rescue
-                        raise Exception.new "Error in parsing String into Number"
+                        
+                        p! arr[fisent["range"]]
+
+                        unsolved_op -= 1
+                    else
+                        ErrorInCalc.new ErrorInCalc.message
                     end
-                else
-                    ErrorInCalc.new ErrorInCalc.message
-                end
-            end
+               end
+               op_i += 1
+            end  
             
             fres.to_s
-        end
-
-        private def __answer_of_sentence(op : String, x : Int32, y : Int32) : Number | Nil
-            case op
-            when "+"
-                return x + y
-            when "-"
-                return x - y
-            when "*"
-                return x * y
-            when "/"
-                return x / y
-            else
-                raise UnknownOperator.new UnknownOperator.message
-            end
         end
         
         def solve(line : String) : String | UnacceptableSyntax # -> main function
@@ -150,6 +150,10 @@ module MathSolver
 
     class Validators
         @@operators : Array(String) = ["+", "-", "*", "/"]
+
+        def self.operators
+            @@operators
+        end
 
         def self.is_operator?(ch : String)
             @@operators.includes?(ch)

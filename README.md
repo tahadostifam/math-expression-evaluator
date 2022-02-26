@@ -1,27 +1,30 @@
-# main
+### Run
 
-TODO: Write a description here
+```bash
+crystal run src/main.cr
+```
 
-## Installation
+### Build
 
-TODO: Write installation instructions here
+```bash
+crystal build src/main.cr
+./main
+```
 
-## Usage
+### Examples
 
-TODO: Write usage instructions here
+-   ```crystal
+      (10 + 20) / 3 # -> 10
+      10 + 20 / 3 # -> 10
+    ```
+-   ```crystal
+      3 * (9 / 3) # -> 9
+      10 * 9 / 3 # -> 30
+    ```
+-   ```crystal
+      10 + 20 + 30 + 40 / 4
+    ```
 
-## Development
+### Contributors
 
-TODO: Write development instructions here
-
-## Contributing
-
-1. Fork it (<https://github.com/your-github-user/math__solver/fork>)
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
-
-## Contributors
-
-- [Taha. Dostifam](https://github.com/your-github-user) - creator and maintainer
+-   [Taha. Dostifam](https://github.com/your-github-user) - Creator & Maintainer
