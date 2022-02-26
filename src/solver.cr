@@ -115,7 +115,6 @@ module MathSolver
             pizent = arr.clone
             counted_ops = 4
             while counted_ops > 0
-
                 c = 0
                 while c < arr.size
                     ch = arr[c]
@@ -126,14 +125,9 @@ module MathSolver
                             sf = fisent
                             sl = sesent
                             if sf && sl
-                                p! sf, sl
-
                                 sf = sf.to_a.first
-                                sl = sl.to_a.last + 1
-
-                                puts ":: :: :: "  + sf.to_s + ":: :: ::"
-                                puts ":: :: :: "  + sl.to_s + ":: :: ::"
-
+                                sl = sl.to_a.last
+                                
                                 pizent.insert(sf, "[")
                                 pizent.insert(sl, "]")
                             else
