@@ -2,13 +2,16 @@ module MathSolver
     class Solver
         private alias Object = Hash(String, String)
         private alias Number = Float64 | Int64 | Int32 | Int8
+        private alias DataAndRange = NamedTuple(data: String, range: Range(Int32, Int32))
 
-        private def prev_sent(arr : Array(String), point : Int32) : String | Nil
+        private def prev_sent(arr : Array(String), point : Int32) : DataAndRange | Nil
             dtrt : Array(String) | Nil # data to return
+            itrt : Range(Int32, Int32) | Nil # index to return
             c = point
             while true
                 if c == 0
                     dtrt = arr[0..point]
+                    itrt = 0..point
                     break
                     return
                 end
@@ -16,6 +19,7 @@ module MathSolver
                 begin
                     if Validators.is_operator?(arr[c - 1])
                         dtrt = arr[c..point]
+                        itrt = c..point
                         break
                         return
                     end
@@ -25,17 +29,19 @@ module MathSolver
                 c -= 1
             end
             if dtrt
-                dtrt.join("")
+                {data: dtrt.join(""), range: itrt}
             end
         end
 
-        private def next_sent(arr : Array(String), point : Int32) : String | Nil
+        private def next_sent(arr : Array(String), point : Int32) : DataAndRange | Nil
             dtrt : Array(String) | Nil # data to return
+            itrt : Range(Int32, Int32) | Nil # data to return
             c = point
 
             while true
                 if c == arr.size
                     dtrt = arr[(point + 1)..c]
+                    itrt = (point + 1)..c
                     break
                 end
 
@@ -44,6 +50,7 @@ module MathSolver
                         fncnum = Validators.is_operator?(arr[c + 1])
                         if fncnum
                             dtrt = arr[(point + 1)..c]
+                            itrt = (point + 1)..c
                             break
                         end
                     end
@@ -53,158 +60,34 @@ module MathSolver
                 c += 1
             end
             if dtrt
-                dtrt.join("")
+                {data: dtrt.join(""), range: itrt}
             end
-        end
-
-        private def indexof_prev_sent(arr : Array(String), point : Int32) : Range(Int32, Int32) | Nil
-            dtrt : Range(Int32, Int32) | Nil # data to return
-            c = point
-            while true
-                if c == 0
-                    dtrt = 0..point
-                    break
-                end
-
-                begin
-                    if Validators.is_operator?(arr[c - 1])
-                        dtrt = c..point
-                        break
-                        return
-                    end
-                rescue
-                end
-
-                c -= 1
-            end
-            if dtrt
-                dtrt
-            end
-        end
-
-        private def indexof_next_sent(arr : Array(String), point : Int32) : Range(Int32, Int32) | Nil
-            dtrt : Range(Int32, Int32) | Nil # data to return
-            c = point
-
-            while true
-                if c == arr.size
-                    dtrt = (point + 1)..c
-                    break
-                end
-
-                begin
-                    if !arr[c + 1].nil?
-                        fncnum = Validators.is_operator?(arr[c + 1])
-                        if fncnum
-                            dtrt = (point + 1)..c
-                            break
-                        end
-                    end
-                rescue
-                end
-
-                c += 1
-            end
-            if dtrt
-                dtrt
-            end
-        end
-
-        private def convert_to_seprated_sents(arr : Array(String), nos : Int32) : Array(String)
-            # SECTION - prioritizing sentences
-            pizent = arr.clone
-            counted_ops = 4
-            while counted_ops > 0
-                c = 0
-                while c < arr.size
-                    ch = arr[c]
-                    if ch.to_s == Validators.priorities(counted_ops)
-                        fisent = indexof_prev_sent(arr, c - 1)
-                        sesent = indexof_next_sent(arr, c)
-                        if fisent && fisent
-                            sf = fisent
-                            sl = sesent
-                            if sf && sl
-                                sf = sf.to_a.first
-                                sl = sl.to_a.last
-                                
-                                pizent.insert(sf, "[")
-                                pizent.insert(sl, "]")
-                            else
-                                raise Exception.new "sf or sl is empty in separating sentece"
-                            end
-                        else
-                            raise Exception.new "fisent or sesent is empty ar convert_to_seprated_sents func"
-                        end
-                    end
-                    c += 1
-                end
-                
-                counted_ops -= 1
-            end
-            
-            pizent
         end
 
         private def detect_senteces_and_solve_math(arr : Array(String)) : String
             nos : Int32 = Validators.cosents(arr) # -> number of senteces
             op : String | Nil # -> operator
-            sents = [] of Object # -> array of our senteces
             fres : Number = 0 # -> final result
 
-            if nos != 1
-                line = convert_to_seprated_sents arr, nos
-                p! line.join ""
-                return "TODO :]"
-            else
-                line = arr
-            end
-
             Validators.dosents(arr) do |op_i|
-                fisent : String | Nil = prev_sent(arr, op_i - 1) # -> first sentece
-                sesent : String | Nil = next_sent(arr, op_i) # -> second sentece
+                fisent : DataAndRange | Nil = prev_sent(arr, op_i - 1) # -> first sentece
+                sesent : DataAndRange | Nil = next_sent(arr, op_i) # -> second sentece
                 if fisent && sesent
-                    sents << Object{
-                        "op" => arr[op_i],
-                        "fisent" => fisent, 
-                        "sesent" => sesent 
-                    }
+                    begin
+                        res = do_op(fisent["data"].to_f, sesent["data"].to_f, arr[op_i])
+                        p! res
+                        # if res
+                        #     p! res
+                        #     break
+                        # else
+                        #     raise Exception.new "do_op's callback is empty"
+                        # end
+                    rescue
+                        raise Exception.new "Error in parsing String into Number"
+                    end
                 else
                     ErrorInCalc.new ErrorInCalc.message
                 end
-            end
-
-            p! sents
-
-            ss = 0 # -> solved sentences
-            while ss < sents.size
-                sent = sents[ss]
-
-                sentece_result = __answer_of_sentence(sent["op"], sent["fisent"].to_i, sent["sesent"].to_i)
-                if sentece_result
-                    if ss > 0
-                        case sent["op"]
-                        when "+"
-                            fres = fres + sentece_result
-                        when "-"
-                            fres = fres - sentece_result
-                        when "*"
-                            fres = fres * sentece_result
-                        when "/"
-                            fres = fres / sentece_result
-                        else
-                            raise UnknownOperator.new UnknownOperator.message
-                            break
-                            return Nil
-                        end
-                    else
-                        fres = sentece_result
-                    end
-                else
-                    raise ErrorInCalc.new ErrorInCalc.message
-                end
-
-                ss += 1
             end
             
             fres.to_s
@@ -247,6 +130,21 @@ module MathSolver
             end
 
             result
+        end
+
+        def do_op(s1 : Number, s2 : Number, op : String) : Number | Nil
+            case op
+            when "+"
+                return s1 + s2
+            when "-"
+                return s1 - s2
+            when "*"
+                return s1 * s2
+            when "/"
+                return s1 / s2
+            else
+                raise UnknownOperator.new UnknownOperator.message
+            end
         end
     end
 
