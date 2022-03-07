@@ -1,21 +1,24 @@
-class MathSolver
-    def self.eval(expr : String)
-        expr = expr.dup
-        go = true
-        while go
-            go = false
-            p! /(-?\d+)\s*([*\/])\s*(-?\d+)/.match(expr)
-            # while expr.sub!(/(-?\d+)\s*([*\/])\s*(-?\d+)/) do
-            #     m, op, n = $1.to_i, $2, $3.to_i
-            #     op == "*" ? m*n : m/n
-            # end
-            # while expr.sub!(/(-?\d+)\s*([+-])\s*(-?\d+)/) do
-            #     a, op, b = $1.to_i, $2, $3.to_i
-            #     op == "+" ? a+b : a-b
-            # end
-            # while expr.gsub!(/\(\s*(-?\d+)\s*\)/, '\1')
-            # end
-        end
-        expr.to_i
+module MathSolver
+  def self.solve(expr : String)
+  end
+
+  private def sliceArgs(args : String, start : Int32)
+    res = [] of String
+    i : Int32 = start
+    while i < args.size
+      res.push(args[i].to_s)
+      i += 1
     end
+    return res
+	end
+
+	private alias Log = NamedTuple(level: String, message: String)
+
+	struct Logger
+		logs = [] of Array(Log)
+
+		def self.log(message : String, level : String)
+			logs << {message: message, level: level}
+		end
+	end
 end

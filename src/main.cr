@@ -16,7 +16,7 @@ def main
       when "exit"
         exit
       else
-        result = MathSolver.eval(line)
+        result = MathSolver.solve(line)
         puts "#{RESULT}#{result}"
       end
     end
