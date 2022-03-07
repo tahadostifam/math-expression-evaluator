@@ -14,11 +14,11 @@ crystal build src/main.cr
 ### Examples
 
 -   ```crystal
-      (10 + 20) / 3 # -> 10
+      10 + 20 / 3 # -> 10
       10 + 20 / 3 # -> 10
     ```
 -   ```crystal
-      3 * (9 / 3) # -> 9
+      3 * 9 / 3 # -> 9
       10 * 9 / 3 # -> 30
     ```
 -   ```crystal
@@ -27,4 +27,4 @@ crystal build src/main.cr
 
 ### Contributors
 
--   [Taha. Dostifam](https://github.com/your-github-user) - Creator & Maintainer
+-   [Taha. Dostifam]https://github.com/your-github-user - Creator & Maintainer
