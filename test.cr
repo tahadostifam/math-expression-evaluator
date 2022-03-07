@@ -14,12 +14,20 @@
 
 # arr = [] of Array(Log)
 
-private alias Log = NamedTuple(level: String, message: String)
+# private alias Object = Hash(Symbol, String)
 
-struct Logger
-    logs = [] of Array(Log)
+# struct Logger
+#     @@logs = [] of Object
 
-    def self.log(message : String, level : String)
-        logs << {message: message, level: level}
-    end
-end
+#     def self.log(_message : String, _level : String)
+#         @@logs.push({:message => _message, :level => _level})
+#     end
+
+#     def self.get_logs
+#         @@logs
+#     end
+# end
+
+# Logger.log("Syntax Error", "error")
+
+# p! Logger.get_logs

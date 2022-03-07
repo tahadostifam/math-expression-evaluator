@@ -1,3 +1,5 @@
+private alias Object = Hash(Symbol, String)
+
 module MathSolver
   def self.solve(expr : String)
   end
@@ -12,13 +14,15 @@ module MathSolver
     return res
 	end
 
-	private alias Log = NamedTuple(level: String, message: String)
-
 	struct Logger
-		logs = [] of Array(Log)
+    @@logs = [] of Object
 
-		def self.log(message : String, level : String)
-			logs << {message: message, level: level}
-		end
-	end
+    def self.log(_message : String, _level : String)
+        @@logs.push({:message => _message, :level => _level})
+    end
+
+    def self.get_logs
+        @@logs
+    end
+  end
 end
