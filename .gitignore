@@ -1,7 +1,3 @@
-/docs/
-/lib/
-/bin/
-/.shards/
-*.dwarf
-main
-auto-commit.sh
+.vscode
+.devcontainer
+.idea
