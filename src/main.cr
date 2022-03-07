@@ -1,11 +1,7 @@
 require "./solver.cr"
 
 PROMPT = "> "
-ERROR = "# Error -> "
 RESULT = "# -> "
-
-include MathSolver
-MATH_SOLVER = Solver.new
 
 def main
   while true
@@ -20,12 +16,8 @@ def main
       when "exit"
         exit
       else
-        begin
-          __result__ = MATH_SOLVER.solve line  
-          puts RESULT + __result__
-        rescue e
-          puts e.message
-        end
+        result = MathSolver.eval(line)
+        puts "#{RESULT}#{result}"
       end
     end
   end
