@@ -2,14 +2,20 @@ module MathSolver
     @expr_arr = []
 
     def self.solve(expr)
+      final_result = nil
       @expr_arr = expr
-      @expr_arr = separate_characters!
-      @expr_arr = string_to_int!
-      @expr_arr = evalDevisionExpr!
-      @expr_arr = evalMultipExpr!
-      @expr_arr = evalMinusExpr!
-      @expr_arr = evalPlusExpr!
-      return @expr_arr.join("")
+      if valid_expr?
+        @expr_arr = separate_characters!
+        @expr_arr = string_to_int!
+        @expr_arr = evalDevisionExpr!
+        @expr_arr = evalMultipExpr!
+        @expr_arr = evalMinusExpr!
+        @expr_arr = evalPlusExpr!
+        final_result = @expr_arr.join("")
+      else
+        puts "Invalid Syntax!"
+      end
+      final_result
     end
     
     private
@@ -181,6 +187,20 @@ module MathSolver
         sc_i += 1
        end
        sc
+    end
+
+    def valid_expr?
+      chars = "123456789" + MathSolver.operators.join("")
+      result = true
+      i = 0
+      while i < @expr_arr.length
+        item = @expr_arr[i].to_s
+        if item.strip.length > 0 && !chars.include?(item)
+          result = false
+        end
+        i += 1
+      end
+      result
     end
 
     def self.operators
