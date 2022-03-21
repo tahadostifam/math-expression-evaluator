@@ -21,24 +21,19 @@ module MathSolver
 
     def evalPlusExpr!
         i = 0
-        coo = count_of_ops!  
+        coo = count_of_ops!
 
-        # TODO
-
-        puts "coo: #{coo}"
-
-        while coo == 0
+        while coo > 0
           current_item = @expr_arr[i]
-
-          puts "expr: #{@expr_arr}"
           
           if current_item == "+"
             result = nil
-            prev_word = @expr_arr[i - 1]
-            next_word = @expr_arr[i + 1]
+            prev_word = @expr_arr[i - 1].to_i
+            next_word = @expr_arr[i + 1].to_i
             
             result = prev_word + next_word
             @expr_arr[(i - 1)..(i + 1)] = result
+            i = (i - 1)
 
             coo -= 1
           end
@@ -46,6 +41,20 @@ module MathSolver
           i += 1
         end
         @expr_arr
+    end
+
+    def empty_of_ops?
+      result = true
+      i = 0
+      while i < @expr_arr.length
+        current_item = @expr_arr[i]
+        if MathSolver.operators.include?(current_item)
+          result = false
+          break
+        end
+        i += 1
+      end
+      result
     end
 
     def count_of_ops!

@@ -16,7 +16,7 @@ def main
             Gem.win_platform? ? (system "cls") : (system "clear")
         else
             result = MathSolver.solve(input)
-            puts "#{PROMPT}#{result}"
+             puts "# -> #{result}"
         end
     end
 end
