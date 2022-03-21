@@ -5,12 +5,68 @@ module MathSolver
       @expr_arr = expr
       @expr_arr = separate_characters!
       @expr_arr = string_to_int!
+      @expr_arr = evalDevisionExpr!
+      @expr_arr = evalMultipExpr!
       @expr_arr = evalMinusExpr!
       @expr_arr = evalPlusExpr!
-      return @expr_arr
+      return @expr_arr.join("")
     end
     
     private
+    
+    def evalDevisionExpr!
+      i = 0
+      coo = count_of_ops!("/")
+
+      if coo > 0
+        while coo > 0
+          current_item = @expr_arr[i]
+          
+          if current_item == "/"
+            result = nil
+            prev_word = @expr_arr[i - 1].to_i
+            next_word = @expr_arr[i + 1].to_i
+            
+            result = prev_word / next_word
+            @expr_arr[(i - 1)..(i + 1)] = result
+            i = i - 1
+  
+            coo -= 1
+          end
+  
+          i += 1
+        end
+      end
+
+      @expr_arr
+    end
+
+    def evalMultipExpr!
+      i = 0
+      coo = count_of_ops!("*")
+
+      if coo > 0
+        while coo > 0
+          current_item = @expr_arr[i]
+          
+          if current_item == "*"
+            result = nil
+            prev_word = @expr_arr[i - 1].to_i
+            next_word = @expr_arr[i + 1].to_i
+            
+            result = prev_word * next_word
+            @expr_arr[(i - 1)..(i + 1)] = result
+            i = i - 1
+  
+            coo -= 1
+          end
+  
+          i += 1
+        end
+      end
+
+      @expr_arr
+    end
 
     def evalMinusExpr!
       i = 0
