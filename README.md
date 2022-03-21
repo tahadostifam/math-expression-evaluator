@@ -12,3 +12,7 @@ ruby src/main.rb
 81 / 9 * 2 # -> 18
 ...
 ```
+
+### Screenshot
+
+![](./screenshots/1.png)
