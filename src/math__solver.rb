@@ -2,23 +2,76 @@ module MathSolver
     @expr_arr = []
 
     def self.solve(expr)
-        @expr_arr = expr
-        @expr_arr = separate_characters!
-        return @expr_arr
+      @expr_arr = expr
+      @expr_arr = separate_characters!
+      @expr_arr = string_to_int!
+      @expr_arr = evalPlusExpr!
+      return @expr_arr
     end
     
     private
 
-    def parseMultipExpr
+    def evalMultipExpr
         
     end
 
-    def parseMinusExpr
+    def evalMinusExpr
         
     end
 
-    def parsePlusExpr
-        
+    def evalPlusExpr!
+        i = 0
+        coo = count_of_ops!  
+
+        # TODO
+
+        puts "coo: #{coo}"
+
+        while coo == 0
+          current_item = @expr_arr[i]
+
+          puts "expr: #{@expr_arr}"
+          
+          if current_item == "+"
+            result = nil
+            prev_word = @expr_arr[i - 1]
+            next_word = @expr_arr[i + 1]
+            
+            result = prev_word + next_word
+            @expr_arr[(i - 1)..(i + 1)] = result
+
+            coo -= 1
+          end
+
+          i += 1
+        end
+        @expr_arr
+    end
+
+    def count_of_ops!
+      i = 0
+      c = 0
+      while i < @expr_arr.length
+        if MathSolver.operators.include?(@expr_arr[i])
+          c += 1
+        end
+        i += 1
+      end
+      c
+    end
+
+    def string_to_int!
+      i = 0
+      while i < @expr_arr.length
+        current_item = @expr_arr[i]
+
+        if !MathSolver.operators.include?(current_item)
+          @expr_arr[i] = current_item.to_i
+        end
+
+        i += 1
+      end
+      @expr_arr
     end
 
     def separate_characters!
