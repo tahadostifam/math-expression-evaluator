@@ -5,24 +5,45 @@ module MathSolver
       @expr_arr = expr
       @expr_arr = separate_characters!
       @expr_arr = string_to_int!
+      @expr_arr = evalMinusExpr!
       @expr_arr = evalPlusExpr!
       return @expr_arr
     end
     
     private
 
-    def evalMultipExpr
-        
-    end
+    def evalMinusExpr!
+      i = 0
+      coo = count_of_ops!("-")
 
-    def evalMinusExpr
-        
+      if coo > 0
+        while coo > 0
+          current_item = @expr_arr[i]
+          
+          if current_item == "-"
+            result = nil
+            prev_word = @expr_arr[i - 1].to_i
+            next_word = @expr_arr[i + 1].to_i
+            
+            result = prev_word - next_word
+            @expr_arr[(i - 1)..(i + 1)] = result
+            i = i - 1
+  
+            coo -= 1
+          end
+  
+          i += 1
+        end
+      end
+
+      @expr_arr
     end
 
     def evalPlusExpr!
-        i = 0
-        coo = count_of_ops!
+      i = 0
+      coo = count_of_ops!("+")
 
+      if coo > 0
         while coo > 0
           current_item = @expr_arr[i]
           
@@ -33,35 +54,23 @@ module MathSolver
             
             result = prev_word + next_word
             @expr_arr[(i - 1)..(i + 1)] = result
-            i = (i - 1)
-
+            i = i - 1
+  
             coo -= 1
           end
-
+  
           i += 1
         end
-        @expr_arr
-    end
-
-    def empty_of_ops?
-      result = true
-      i = 0
-      while i < @expr_arr.length
-        current_item = @expr_arr[i]
-        if MathSolver.operators.include?(current_item)
-          result = false
-          break
-        end
-        i += 1
       end
-      result
+
+      @expr_arr
     end
 
-    def count_of_ops!
+    def count_of_ops!(op)
       i = 0
       c = 0
       while i < @expr_arr.length
-        if MathSolver.operators.include?(@expr_arr[i])
+        if @expr_arr[i] == op
           c += 1
         end
         i += 1
@@ -98,7 +107,6 @@ module MathSolver
        lo_i = 0 # last operator's index
        while sc_i < wws.length + 1
         current_char = wws[sc_i]
-
         if MathSolver.operators.include?(current_char)
           fn_i = sc_i - 1# finish of word's index
           if MathSolver.operators.include?(wws[sc_i + 1])
