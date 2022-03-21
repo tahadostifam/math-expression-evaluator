@@ -14,6 +14,7 @@ module MathSolver
         final_result = @expr_arr.join("")
       else
         puts "Invalid Syntax!"
+        exit
       end
       final_result
     end
@@ -33,7 +34,13 @@ module MathSolver
             prev_word = @expr_arr[i - 1].to_i
             next_word = @expr_arr[i + 1].to_i
             
-            result = prev_word / next_word
+            result = nil
+            begin
+              result = prev_word / next_word
+            rescue ZeroDivisionError => e
+              puts "ZeroDivisionError"
+              exit
+            end
             @expr_arr[(i - 1)..(i + 1)] = result
             i = i - 1
   
@@ -190,7 +197,7 @@ module MathSolver
     end
 
     def valid_expr?
-      chars = "123456789" + MathSolver.operators.join("")
+      chars = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"] + MathSolver.operators
       result = true
       i = 0
       while i < @expr_arr.length
