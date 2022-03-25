@@ -4,9 +4,11 @@ module MathSolver
     def self.solve(expr)
       final_result = nil
       @expr_arr = expr
-      @expr_arr = separate_characters!
       if valid_expr?
+        @expr_arr = separate_characters!
         @expr_arr = string_to_int!
+
+        @expr_arr = evalSqrt!
 
         @expr_arr = evalDevisionExpr!
         @expr_arr = evalMultipExpr!
@@ -27,14 +29,27 @@ module MathSolver
       i = 0
       coo = count_of_ops!("sqrt")
 
+      puts "coo of sqrt: #{coo}" # NOTE
+
       if coo > 0
         while coo > 0
           current_item = @expr_arr[i]
           
-          if current_item == "sqrt"
-            sqrt_val = i
+          if current_item.include? "sqrt"
+            sqrt_val = nil
+            open_bracket_i = i + 1
 
-            @expr_arr[(i - 1)..(i + 1)] = result
+            while true
+              if @expr_arr[open_bracket_i] == ")"
+                sqrt_val = @expr_arr[(i + 1)..open_bracket_i]
+                break
+              end
+              open_bracket_i += 1
+            end
+
+            puts "sqrt_val: #{sqrt_val.to_s}"
+
+            @expr_arr[(i - 1)..(i + 1)] = 100
             i = i - 1
   
             coo -= 1
@@ -164,8 +179,11 @@ module MathSolver
     def count_of_ops!(op)
       i = 0
       c = 0
+
+      puts "op: #{is_valid_keyword?(op)}"
+
       while i < @expr_arr.length
-        if @expr_arr[i] == op
+        if @expr_arr[i].to_s.include? op || is_valid_keyword?(op)
           c += 1
         end
         i += 1
@@ -188,38 +206,49 @@ module MathSolver
     end
 
     def separate_characters!
-       wws = [] # without_white_space
-       wws_i = 0
-       while wws_i < @expr_arr.length
-        current_char = @expr_arr[wws_i].strip
-        if current_char.length > 0
-          wws << current_char
+      wws = [] # without_white_space
+      wws_i = 0
+      while wws_i < @expr_arr.length
+      current_char = @expr_arr[wws_i].to_s.strip
+      if current_char.length > 0
+        wws << current_char
+      end
+      wws_i += 1
+      end
+      sc = [] # separated_chars
+      sc_i = 0
+      lo_i = 0 # last operator's index
+      while sc_i < wws.length + 1
+      current_char = wws[sc_i]
+      if include_ops?(current_char)
+        fn_i = sc_i - 1 # finish of word's index
+        if include_ops?(wws[sc_i + 1])
+          fn_i = sc_i
         end
-        wws_i += 1
-       end
-       sc = [] # separated_chars
-       sc_i = 0
-       lo_i = 0 # last operator's index
-       while sc_i < wws.length + 1
-        current_char = wws[sc_i]
-        if include_ops?(current_char)
-          fn_i = sc_i - 1# finish of word's index
-          if include_ops?(wws[sc_i + 1])
-            fn_i = sc_i
-          end
-          sc << wws[lo_i..fn_i].join("")
-          sc << current_char
-          lo_i = sc_i + 1
-        end
+        sc << wws[lo_i..fn_i].join("")
+        sc << current_char
+        lo_i = sc_i + 1
+      end
 
-        if sc_i + 1 >= wws.length + 1
-          # finish of chars
-          sc << wws[lo_i..sc_i].join("")
+      if sc_i + 1 >= wws.length + 1
+        # finish of chars
+        sc << wws[lo_i..sc_i].join("")
+      end
+      
+      sc_i += 1
+      end
+      
+      sc
+    end
+
+    def is_valid_keyword?(inp)
+      ret = true
+      separate_characters!.each do |z|
+        if !["sqrt"].include?(inp.to_s)
+          ret = false
         end
-        
-        sc_i += 1
-       end
-       sc
+      end
+      ret
     end
 
     def valid_expr?
@@ -228,11 +257,13 @@ module MathSolver
       i = 0
       while i < @expr_arr.length
         item = @expr_arr[i].to_s
-        if item.strip.length > 0 && !chars.include?(item) && !item.include?("sqrt")
+        
+        if item.strip.length > 0 && !chars.include?(item) && !is_valid_keyword?(item)
           result = false
         end
         i += 1
       end
+
       result
     end
 
