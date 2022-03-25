@@ -4,8 +4,8 @@ module MathSolver
     def self.solve(expr)
       final_result = nil
       @expr_arr = expr
+      @expr_arr = separate_characters!
       if valid_expr?
-        @expr_arr = separate_characters!
         @expr_arr = string_to_int!
 
         @expr_arr = evalDevisionExpr!
@@ -219,7 +219,6 @@ module MathSolver
         
         sc_i += 1
        end
-       p sc
        sc
     end
 
@@ -229,8 +228,7 @@ module MathSolver
       i = 0
       while i < @expr_arr.length
         item = @expr_arr[i].to_s
-        puts "bad syntax :-> " + item
-        if item.strip.length > 0 && !chars.include?(item)
+        if item.strip.length > 0 && !chars.include?(item) && !item.include?("sqrt")
           result = false
         end
         i += 1
@@ -243,6 +241,6 @@ module MathSolver
     end
 
     def self.operators
-      return ["+", "-", "*", "/", "sqrt:"]
+      return ["+", "-", "*", "/", "sqrt"]
     end
 end
