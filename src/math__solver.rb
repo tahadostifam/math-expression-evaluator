@@ -244,6 +244,8 @@ module MathSolver
     def is_valid_keyword?(inp)
       ret = true
       separate_characters!.each do |z|
+        # FIXME
+        # ANCHOR
         if !["sqrt"].include?(inp.to_s)
           ret = false
         end
