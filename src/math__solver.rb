@@ -7,10 +7,12 @@ module MathSolver
       if valid_expr?
         @expr_arr = separate_characters!
         @expr_arr = string_to_int!
+
         @expr_arr = evalDevisionExpr!
         @expr_arr = evalMultipExpr!
         @expr_arr = evalMinusExpr!
         @expr_arr = evalPlusExpr!
+
         final_result = @expr_arr.join("")
       else
         puts "Invalid Syntax!"
@@ -21,6 +23,30 @@ module MathSolver
     
     private
     
+    def evalSqrt!
+      i = 0
+      coo = count_of_ops!("sqrt")
+
+      if coo > 0
+        while coo > 0
+          current_item = @expr_arr[i]
+          
+          if current_item == "sqrt"
+            sqrt_val = i
+
+            @expr_arr[(i - 1)..(i + 1)] = result
+            i = i - 1
+  
+            coo -= 1
+          end
+  
+          i += 1
+        end
+      end
+
+      @expr_arr
+    end
+
     def evalDevisionExpr!
       i = 0
       coo = count_of_ops!("/")
@@ -176,9 +202,9 @@ module MathSolver
        lo_i = 0 # last operator's index
        while sc_i < wws.length + 1
         current_char = wws[sc_i]
-        if MathSolver.operators.include?(current_char)
+        if include_ops?(current_char)
           fn_i = sc_i - 1# finish of word's index
-          if MathSolver.operators.include?(wws[sc_i + 1])
+          if include_ops?(wws[sc_i + 1])
             fn_i = sc_i
           end
           sc << wws[lo_i..fn_i].join("")
@@ -193,15 +219,17 @@ module MathSolver
         
         sc_i += 1
        end
+       p sc
        sc
     end
 
     def valid_expr?
-      chars = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"] + MathSolver.operators
+      chars = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "(", ")"] + MathSolver.operators
       result = true
       i = 0
       while i < @expr_arr.length
         item = @expr_arr[i].to_s
+        puts "bad syntax :-> " + item
         if item.strip.length > 0 && !chars.include?(item)
           result = false
         end
@@ -210,7 +238,11 @@ module MathSolver
       result
     end
 
+    def include_ops?(inp)
+      MathSolver.operators.include?(inp)
+    end
+
     def self.operators
-      return ["+", "-", "*", "/"]
+      return ["+", "-", "*", "/", "sqrt:"]
     end
 end
