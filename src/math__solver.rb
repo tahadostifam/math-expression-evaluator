@@ -180,8 +180,6 @@ module MathSolver
       i = 0
       c = 0
 
-      puts "op: #{is_valid_keyword?(op)}"
-
       while i < @expr_arr.length
         if @expr_arr[i].to_s.include? op || is_valid_keyword?(op)
           c += 1
@@ -237,36 +235,46 @@ module MathSolver
       
       sc_i += 1
       end
-      
       sc
     end
 
     def is_valid_keyword?(inp)
+      separated_chars_arr = separate_characters!
       ret = true
-      separate_characters!.each do |z|
-        # FIXME
-        # ANCHOR
-        if !["sqrt"].include?(inp.to_s)
+      i = 0
+      while i < separated_chars_arr.length
+        item = separated_chars_arr[i]
+        if !item.to_s.include?(inp.to_s)
           ret = false
         end
+        for valid_char in valid_chars
+          if valid_char.include?(item)
+            ret = true
+          end
+        end
+        i += 1
       end
+      puts "ret: #{ret}"
       ret
     end
 
     def valid_expr?
-      chars = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "(", ")"] + MathSolver.operators
       result = true
       i = 0
       while i < @expr_arr.length
         item = @expr_arr[i].to_s
         
-        if item.strip.length > 0 && !chars.include?(item) && !is_valid_keyword?(item)
+        if item.strip.length > 0 && !valid_chars.include?(item) && !is_valid_keyword?(item)
           result = false
         end
         i += 1
       end
 
       result
+    end
+
+    def valid_chars
+      ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "(", ")"] + MathSolver.operators
     end
 
     def include_ops?(inp)
