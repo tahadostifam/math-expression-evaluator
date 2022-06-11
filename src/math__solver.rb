@@ -51,7 +51,7 @@ module MathSolver
       separated_chars
     end
 
-    def self.is_valid_keyword?(expr_arr, inp)
+    def self.is_valid_char?(expr_arr, inp)
       separated_chars_arr = separate_characters(expr_arr)
       return_value = true
       i = 0
@@ -76,7 +76,7 @@ module MathSolver
       while i < expr_arr.length
         item = expr_arr[i].to_s
 
-        if item.strip.length > 0 && !valid_chars.include?(item) && !is_valid_keyword?(expr_arr, item)
+        if item.strip.length > 0 && !valid_chars.include?(item) && !is_valid_char?(expr_arr, item)
           result = false
         end
         i += 1
@@ -88,8 +88,6 @@ module MathSolver
     def self.valid_chars
       ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "(", ")"] + MathSolver::Operators.operators
     end
-
-    
   end
 
   class Operators
@@ -98,7 +96,7 @@ module MathSolver
       c = 0
 
       while i < expr_arr.length
-        if expr_arr[i].to_s.include? op || is_valid_keyword?(expr_arr, op)
+        if expr_arr[i].to_s.include? op || is_valid_char?(expr_arr, op)
           c += 1
         end
         i += 1
@@ -155,9 +153,11 @@ module MathSolver
   end
 
   class Methods
-    methods_keywords = [
-      "sqrt"
-    ]
+    def self.methods_keywords
+      [
+        "sqrt"
+      ]
+    end
     
     def self.get_value_of_method(method_name, input)
       start_point = (method_name.index method_name).to_i + method_name.length
@@ -181,10 +181,32 @@ module MathSolver
       end
     end
 
+    def self.get_method_name(input)
+      return_value = :bad_syntax
+      for i in (0..(input.length)) do
+        if input[i] == "("
+          return_value = input[0..(i - 1)]
+        end
+      end
+      return_value
+    end
+
     def self.count_of_methods(expr_arr, op)
+      count_of_methods = 0
+      expr_arr.each do |item|
+        method_name = get_method_name(item)
+        puts method_name
+        if method_name != :bad_syntax
+          if MathSolver::Methods.methods_keywords.include?(method_name)
+            count_of_methods += 1
+          end
+        end
+      end
+      count_of_methods
     end
 
     def self.start_solve!(expr_arr, name)
+
     end
   end
 

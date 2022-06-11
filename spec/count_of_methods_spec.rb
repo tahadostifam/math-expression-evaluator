@@ -8,13 +8,11 @@ RSpec.describe MathSolver, "#count_of_methods" do
     context "Count Of Methods" do
         if MathSolver::Lib.is_valid_expr? $input
             expr_arr = 
-                MathSolver::Lib.separate_characters($input)
-            expr_arr = 
-                MathSolver::Lib.convert_string_to_int($input)
+                MathSolver::Lib.separate_characters($input)        
 
-            count_of_methods = MathSolver::Lib.count_of_methods(expr_arr)
+            count_of_sqrt_methods = MathSolver::Methods.count_of_methods(expr_arr, "sqrt")
 
-            puts "count_of_methods: #{count_of_methods}"
+            puts "count_of_methods: #{count_of_sqrt_methods}"
             
             it "Success"
         else
