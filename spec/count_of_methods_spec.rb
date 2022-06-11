@@ -2,7 +2,7 @@ require_relative "../src/math__solver"
 
 include MathSolver
 
-$input = "sqrt(9)"
+$input = "sqrat(9)"
 
 RSpec.describe MathSolver, "#count_of_methods" do
     context "Count Of Methods" do

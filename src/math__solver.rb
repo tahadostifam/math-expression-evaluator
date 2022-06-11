@@ -153,12 +153,32 @@ module MathSolver
   end
 
   class Methods
-    def self.methods_keywords
+    def self.keywords
       [
-        "sqrt"
+        "sqrt",
       ]
     end
-    
+
+    def self.check_keywords!(expr_arr)
+      for expr_item in expr_arr
+        if !MathSolver::Lib.valid_chars.include?(expr_item) && !MathSolver::Lib.is_valid_char?(expr_arr, expr_item)
+          finnaly_its_valid = false
+          MathSolver::Methods.keywords.each do |keyword|
+            method_name = get_method_name(expr_item)
+            if MathSolver::Methods.keywords.include?(method_name)
+              finnaly_its_valid = true
+              break
+            end
+          end
+
+          if !finnaly_its_valid
+            puts "Invalid Syntax!"
+            exit
+          end
+        end
+      end
+    end
+
     def self.get_value_of_method(method_name, input)
       start_point = (method_name.index method_name).to_i + method_name.length
       if input[start_point] == "(" && input[input.length - 1] == ")"
@@ -183,7 +203,8 @@ module MathSolver
 
     def self.get_method_name(input)
       return_value = :bad_syntax
-      for i in (0..(input.length)) do
+      puts "inp:#{input}"
+      for i in (0..(input.length))
         if input[i] == "("
           return_value = input[0..(i - 1)]
         end
@@ -197,7 +218,7 @@ module MathSolver
         method_name = get_method_name(item)
         puts method_name
         if method_name != :bad_syntax
-          if MathSolver::Methods.methods_keywords.include?(method_name)
+          if MathSolver::Methods.keywords.include?(method_name)
             count_of_methods += 1
           end
         end
@@ -206,7 +227,6 @@ module MathSolver
     end
 
     def self.start_solve!(expr_arr, name)
-
     end
   end
 
@@ -215,6 +235,9 @@ module MathSolver
 
     if MathSolver::Lib.is_valid_expr? expr
       expr = MathSolver::Lib.separate_characters(expr)
+
+      MathSolver::Methods.check_keywords!(expr)
+
       expr = MathSolver::Lib.convert_string_to_int(expr)
 
       MathSolver::Operators.start_solve!(expr, "/")
