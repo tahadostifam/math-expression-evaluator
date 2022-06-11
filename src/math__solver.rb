@@ -5,8 +5,6 @@ module MathSolver
       while i < expr_arr.length
         current_item = expr_arr[i]
 
-        puts current_item
-
         if !MathSolver::Operators.include_ops? current_item
           expr_arr[i] = current_item.to_i
         end
@@ -203,8 +201,7 @@ module MathSolver
 
     def self.get_method_name(input)
       return_value = :bad_syntax
-      puts "inp:#{input}"
-      for i in (0..(input.length))
+      for i in (0..(input.to_s.length))
         if input[i] == "("
           return_value = input[0..(i - 1)]
         end
@@ -216,7 +213,6 @@ module MathSolver
       count_of_methods = 0
       expr_arr.each do |item|
         method_name = get_method_name(item)
-        puts method_name
         if method_name != :bad_syntax
           if MathSolver::Methods.keywords.include?(method_name)
             count_of_methods += 1
@@ -227,6 +223,28 @@ module MathSolver
     end
 
     def self.start_solve!(expr_arr, name)
+      count_of_methods = MathSolver::Methods.count_of_methods(expr_arr, name)
+      if count_of_methods > 0
+        i = 0
+        while count_of_methods > 0
+          if MathSolver::Methods.get_method_name(expr_arr[i]) == name
+            method_info = MathSolver::Methods.get_value_of_method(name, expr_arr[i])
+
+            if method_info[:state] == :success
+              result = yield(method_info[:value].to_i)
+              expr_arr[i] = result.to_i
+            end
+
+            i = i - 1
+
+            count_of_methods -= 1
+          end
+
+          i += 1
+        end
+      end
+
+      expr_arr
     end
   end
 
@@ -237,6 +255,10 @@ module MathSolver
       expr = MathSolver::Lib.separate_characters(expr)
 
       MathSolver::Methods.check_keywords!(expr)
+      
+      MathSolver::Methods.start_solve!(expr, "sqrt") do |value|
+        Math.sqrt(value).truncate(3)
+      end
 
       expr = MathSolver::Lib.convert_string_to_int(expr)
 
