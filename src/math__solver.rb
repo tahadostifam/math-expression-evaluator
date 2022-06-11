@@ -13,7 +13,7 @@ module MathSolver
       c
     end
 
-    def self.string_to_int!(expr_arr)
+    def self.convert_string_to_int(expr_arr)
       i = 0
       while i < expr_arr.length
         current_item = expr_arr[i]
@@ -27,7 +27,7 @@ module MathSolver
       expr_arr
     end
 
-    def self.separate_characters!(expr_arr)
+    def self.separate_characters(expr_arr)
       without_white_space_arr = []
       without_white_space_index = 0
       while without_white_space_index < expr_arr.length
@@ -63,7 +63,7 @@ module MathSolver
     end
 
     def self.is_valid_keyword?(expr_arr, inp)
-      separated_chars_arr = separate_characters!(expr_arr)
+      separated_chars_arr = separate_characters(expr_arr)
       return_value = true
       i = 0
       while i < separated_chars_arr.length
@@ -81,7 +81,7 @@ module MathSolver
       return_value
     end
 
-    def self.valid_expr?(expr_arr)
+    def self.is_valid_expr?(expr_arr)
       result = true
       i = 0
       while i < expr_arr.length
@@ -100,12 +100,12 @@ module MathSolver
       ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "(", ")"] + MathSolver::Lib.operators
     end
 
-    def self.include_ops?(inp)
-      MathSolver::Lib.operators.include?(inp)
-    end
-
     def self.operators
       return ["+", "-", "*", "/", "sqrt"]
+    end
+
+    def self.include_ops?(inp)
+      MathSolver::Lib.operators.include?(inp)
     end
   end
 
@@ -150,12 +150,17 @@ module MathSolver
     end
   end
 
+  class MethodEvalulator
+    def self.start_solve!(expr_arr, name)
+    end
+  end
+
   def self.solve(expr)
     final_result = nil
 
-    if MathSolver::Lib.valid_expr? expr
-      expr = MathSolver::Lib.separate_characters!(expr)
-      expr = MathSolver::Lib.string_to_int!(expr)
+    if MathSolver::Lib.is_valid_expr? expr
+      expr = MathSolver::Lib.separate_characters(expr)
+      expr = MathSolver::Lib.convert_string_to_int(expr)
 
       MathSolver::OperatorEvalulator.start_solve!(expr, "/")
       MathSolver::OperatorEvalulator.start_solve!(expr, "*")
